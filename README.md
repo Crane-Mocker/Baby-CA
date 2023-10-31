@@ -1,2 +1,3 @@
 # centralized-node
-CA
+
+![](pic/baby-CA.png)
