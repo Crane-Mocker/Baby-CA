@@ -38,11 +38,15 @@ csr = x509.CertificateSigningRequestBuilder().subject_name(x509.Name([
 ])).add_extension(
     x509.SubjectAlternativeName([x509.DNSName(u"node1.c0conut.com")]),
     critical=False,
-    # Sign the CSR with our private key.
-).sign(private_key, hashes.SHA256(), default_backend())
-print("CSR created.")
+    # Sign the CSR with private key.
+).sign(private_key, hashes.SHA256())
 
-# Write CSR to file
+if isinstance(csr, x509.CertificateSigningRequest):
+    print("CSR created.")
+else:
+    print("CSR creation failed.")
+
+# Write csr to file
 with open('node1.csr', 'wb') as f:
     f.write(csr.public_bytes(serialization.Encoding.PEM))
 

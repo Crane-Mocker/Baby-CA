@@ -40,8 +40,8 @@ def generate_certificate(csr_data):
     ).not_valid_before(
         datetime.datetime.utcnow()
     ).not_valid_after(
-        # certificate valid for 365 days
-        datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        # certificate valid for 3 days
+        datetime.datetime.utcnow() + datetime.timedelta(days=3)
     ).add_extension(
         x509.BasicConstraints(ca=False, path_length=None), critical=True,
     ).sign(ca_private_key, hashes.SHA256(), default_backend())
@@ -68,10 +68,9 @@ while True:
         # Check if the IP is allowed
         if str(ip_address(client_address[0])) in allowed_ips:
             # Receive the CSR data
-            csr_data = b''
-            data = connection.recv(2048)
-            #print(type(data))
-            #print(sys.getsizeof(data))
+            csr_data = connection.recv(2048)
+            print(type(csr_data))
+            print(sys.getsizeof(csr_data))
             try:
                 csr = x509.load_pem_x509_csr(csr_data)
                 print('CSR loaded successfully.')

@@ -54,8 +54,12 @@ openssl dgst -sha256 -verify <(openssl x509 -in node1.crt -pubkey -noout) -signa
 ## Use
 
 **CA**
+First
 
 ```bash
 openssl genrsa -des3 -out CAPri.key 2048
 openssl req -x509 -new -nodes -key CAPri.key -sha256 -days 365 -out CA.pem
 ```
+
+![](pic/sign-cert.png)
+![](pic/cert.png)
