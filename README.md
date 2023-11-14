@@ -2,6 +2,31 @@
 
 This is a baby CA working in lab/intranet
 
+## RSA Signature Scheme
+
+$n = pq$, p, q are large secret primes
+
+Message space $\mathbb{P} = \mathbb{Z}_n$
+
+Signature space $\mathbb{A} = \mathbb{Z}_n$
+
+Key space $\mathbb{K} = \{(n, p, q, a, b) | n = pq, ab \equiv 1 \mod \phi(n)\}$
+
+> $1 \lt e \lt \phi(N)$ such that gcd(e, $\phi(N)$) = 1. Compute d such that $ed \equiv 1 \mod \phi(N)$
+
+**Sign**
+
+Given a message x and private key K=(p, q, a)
+
+$sig_K(x) = x^a \mod n$
+
+**Verify**
+
+Given a message x with signature y and public key (n, b), compute
+
+$ver_K(x, y) = true \Leftrightarrow x \equiv y^b (\mod n)\ for\ x,y \in \mathbb{Z}_n$
+
+
 ## Communication
 
 ![](pic/baby-CA.png)
