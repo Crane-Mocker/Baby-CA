@@ -8,7 +8,7 @@ from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
 
 # Configuration
-baby_ca_address = 'localhost'
+baby_ca_address = 'localhost' # change to your CA addr
 baby_ca_port = 3000
 pri_key = 'node1Pri.key'
 csr_name = 'node1.csr'
@@ -79,13 +79,14 @@ def reqCert(private_key):
     
         # Receive data from the server and shut down
         received = sock.recv(2048)
-        print("Certificate received from Baby CA:")
-    
-    # Write received certificate to file
-    with open(crt_name, 'wb') as f:
-        f.write(received)
-    
-    print(f"Certificate saved as {crt_name}")
+        if len(received):
+            print("Certificate received from Baby CA:")    
+            # Write received certificate to file
+            with open(crt_name, 'wb') as f:
+                f.write(received)    
+            print(f"Certificate saved as {crt_name}")
+        else:
+            print("Din't receive Certificate from Baby CA!")
 
 def main():
     parser = argparse.ArgumentParser()

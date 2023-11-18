@@ -76,15 +76,53 @@ openssl x509 -in node1.crt
 openssl dgst -sha256 -verify <(openssl x509 -in node1.crt -pubkey -noout) -signature signature.txt to-sign.txt
 ```
 
+## CA: -f
+
+If `-f` is set for Baby CA, CA will listen to port `3001` for flag values from clients. If "1" received, the flag value for the certain client would be updated to "True" ("False by default").
+
+![](pic/ca-flag.png)
+
 ## Use
 
-**CA**
-First
+First generate private key and pem for CA.
 
 ```bash
 openssl genrsa -des3 -out CAPri.key 2048
 openssl req -x509 -new -nodes -key CAPri.key -sha256 -days 365 -out CA.pem
 ```
 
-![](pic/sign-cert.png)
-![](pic/cert.png)
+**Baby CA**
+
+```bash
+usage: Baby-CA.py [-h] [-f]
+
+options:
+  -h, --help  show this help message and exit
+  -f, --flag  The CA will constantly receive flags from clinets.
+```
+
+**Baby Client**
+
+```bash
+usage: Baby-Client.py [-h] [-k] [-r]
+
+options:
+  -h, --help     show this help message and exit
+  -k, --key      Generate Private Key locally
+  -r, --request  Construct CSR locally and request CA for cert
+```
+
+**Examples**
+
+Generate private key for client:
+
+![](pic/prikey-client.png)
+
+Start Baby CA without `-f` option:
+
+![](pic/ca-nf.png)
+
+Start Baby CA with `-f` option:
+
+![](pic/ca-f.png)
+
