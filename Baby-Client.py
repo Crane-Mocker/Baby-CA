@@ -58,17 +58,17 @@ def reqCert(private_key):
         critical=False,
         # Sign the CSR with private key.
     ).sign(private_key, hashes.SHA256())
-    
+
     if isinstance(csr, x509.CertificateSigningRequest):
         print("CSR created.")
     else:
         print("CSR creation failed.")
-    
+
     # Write csr to file
     with open(csr_name, 'wb') as f:
         f.write(csr.public_bytes(serialization.Encoding.PEM))
     print(f"CSR saved as {csr_name}")
-    
+
     # Send the CSR to the Baby CA
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # Connect to server and send data
@@ -76,14 +76,14 @@ def reqCert(private_key):
         print("Sending CSR...")
         sock.sendall(csr.public_bytes(serialization.Encoding.PEM))
         print("CSR sent!")
-    
+
         # Receive data from the server and shut down
         received = sock.recv(2048)
-        if len(received):
-            print("Certificate received from Baby CA:")    
+        if len(received) > 20:
+            print("Certificate received from Baby CA:")
             # Write received certificate to file
             with open(crt_name, 'wb') as f:
-                f.write(received)    
+                f.write(received)
             print(f"Certificate saved as {crt_name}")
         else:
             print("Din't receive Certificate from Baby CA!")
