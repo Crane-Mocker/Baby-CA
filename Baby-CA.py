@@ -31,8 +31,8 @@ with open(ca_certificate_path, 'rb') as f:
 def generate_certificate(csr_data):
     csr = x509.load_pem_x509_csr(csr_data, default_backend())
     print(csr)
-    # Generate certificate
-    cert = x509.CertificateBuilder().subject_name(
+    # gen cert
+    cert_builder = x509.CertificateBuilder().subject_name(
         csr.subject
     ).issuer_name(
         ca_certificate.subject
@@ -47,8 +47,14 @@ def generate_certificate(csr_data):
         datetime.datetime.utcnow() + datetime.timedelta(days=3)
     ).add_extension(
         x509.BasicConstraints(ca=False, path_length=None), critical=True,
-    ).sign(ca_private_key, hashes.SHA256(), default_backend())
-    
+    )
+
+    # Copy the SAN extension from CSR to the certificate
+    san_extension = csr.extensions.get_extension_for_oid(x509.ExtensionOID.SUBJECT_ALTERNATIVE_NAME)
+    cert_builder = cert_builder.add_extension(san_extension.value, critical=san_extension.critical)
+
+    # Sign and return the certificate
+    cert = cert_builder.sign(private_key=ca_private_key, algorithm=hashes.SHA256(), backend=default_backend())
     return cert.public_bytes(serialization.Encoding.PEM)
 
 # initialize flag dictionary. False by default
