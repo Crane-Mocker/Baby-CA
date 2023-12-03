@@ -104,12 +104,13 @@ options:
 **Baby Client**
 
 ```bash
-usage: Baby-Client.py [-h] [-k] [-r]
+usage: Baby-Client.py [-h] [-k] [-r] [-c]
 
 options:
   -h, --help     show this help message and exit
   -k, --key      Generate Private Key locally
   -r, --request  Construct CSR locally and request CA for cert
+  -c, --cert     Print cert info
 ```
 
 **Examples**

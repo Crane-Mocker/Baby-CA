@@ -6,6 +6,7 @@ from cryptography.x509.oid import NameOID
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
+import ipaddress
 
 # Configuration
 baby_ca_address = 'localhost' # change to your CA addr
@@ -54,13 +55,17 @@ def reqCert(private_key):
         x509.NameAttribute(NameOID.ORGANIZATION_NAME, u"c0conut"),
         x509.NameAttribute(NameOID.COMMON_NAME, u"node1.c0conut.com"),
     ])).add_extension(
-        x509.SubjectAlternativeName([x509.DNSName(u"node1.c0conut.com")]),
+        x509.SubjectAlternativeName([
+            #x509.DNSName(u"node1.c0conut.com")
+            x509.IPAddress(ipaddress.IPv4Address(u"127.0.0.1"))
+            ]),
         critical=False,
         # Sign the CSR with private key.
     ).sign(private_key, hashes.SHA256())
 
     if isinstance(csr, x509.CertificateSigningRequest):
         print("CSR created.")
+        print_csr_info(csr)
     else:
         print("CSR creation failed.")
 
@@ -88,16 +93,42 @@ def reqCert(private_key):
         else:
             print("Din't receive Certificate from Baby CA!")
 
+def print_csr_info(csr):
+    print("\nCSR Information:")
+    print("Subject:", csr.subject)
+    for extension in csr.extensions:
+        print("Extension:", extension.oid._name, extension.value)
+
+def print_cert_info(cert_path):
+    # Load the certificate from the file
+    with open(cert_path, "rb") as cert_file:
+        cert_data = cert_file.read()
+        cert = x509.load_pem_x509_certificate(cert_data, default_backend())
+
+    # Print certificate information
+    print("\nCertificate Information:")
+    print("Issuer:", cert.issuer)
+    print("Subject:", cert.subject)
+    print("Valid From:", cert.not_valid_before)
+    print("Valid To:", cert.not_valid_after)
+    print("Serial Number:", cert.serial_number)
+
+    for extension in cert.extensions:
+        print("Extension:", extension.oid._name, extension.value)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-k', '--key', action="store_true", help="Generate Private Key locally")
     parser.add_argument('-r', '--request', action="store_true", help="Construct CSR locally and request CA for cert")
+    parser.add_argument('-c', '--cert', action="store_true", help="Print cert info")
     args = parser.parse_args()
     if args.key:
         genPriKey()
     if args.request:
         private_key = loadPriKey()
         reqCert(private_key)
+    if args.cert:
+        print_cert_info(crt_name)
 
 if __name__ == "__main__":
     main()
