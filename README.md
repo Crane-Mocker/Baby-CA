@@ -29,8 +29,6 @@ $ver_K(x, y) = true \Leftrightarrow x \equiv y^b (\mod n)\ for\ x,y \in \mathbb{
 
 ## Communication
 
-![](pic/baby-CA.png)
-
 **CA**
 
 Generate private key `CAPri.key` and CA cert `CA.pem`. CA acts as root CA.
